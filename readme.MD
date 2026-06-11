@@ -13,7 +13,7 @@ This module creates following resources
 9. Rout table entries through peering
 
 ## Inputs
-project - (Required) string type. User should pass the project name.
-environment - (Required) string type. User should pass the environment, values should be one of dev, uat, qa and prod.
+project - (Required) string type. User should pass the project name
+environment - (Required) string type. User should pass the environment, values should be one of dev, uat, qa and prod
 
 ## Outputs
