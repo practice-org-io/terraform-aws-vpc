@@ -7,12 +7,12 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id  # vpc association
+  vpc_id = aws_vpc.main.id # VPC association
 
   tags = local.igw_final_tags
 }
 
-#Public Subnets
+# Public Subnets
 resource "aws_subnet" "public" {
   count = length(var.public_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
@@ -30,9 +30,9 @@ resource "aws_subnet" "public" {
     )
 }
 
-#Private Subnets
+# private Subnets
 resource "aws_subnet" "private" {
-  count = length(var.public_subnet_cidrs)
+  count = length(var.private_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
   cidr_block = var.private_subnet_cidrs[count.index]
   availability_zone = local.az_names[count.index]
@@ -47,7 +47,7 @@ resource "aws_subnet" "private" {
     )
 }
 
-#database Subnets
+# database Subnets
 resource "aws_subnet" "database" {
   count = length(var.database_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
@@ -56,7 +56,7 @@ resource "aws_subnet" "database" {
 
   tags = merge(
         local.common_tags,
-        # roboshop-dev-private-us-east-1a
+        # roboshop-dev-database-us-east-1a
         {
             Name = "${var.project}-${var.environment}-database-${local.az_names[count.index]}"
         },
@@ -74,7 +74,7 @@ resource "aws_route_table" "public" {
             Name = "${var.project}-${var.environment}-public"
         },
         var.public_route_table_tags
-    )
+  )
 }
 
 resource "aws_route_table" "private" {
@@ -87,7 +87,7 @@ resource "aws_route_table" "private" {
             Name = "${var.project}-${var.environment}-private"
         },
         var.private_route_table_tags
-    )
+  )
 }
 
 resource "aws_route_table" "database" {
@@ -100,7 +100,7 @@ resource "aws_route_table" "database" {
             Name = "${var.project}-${var.environment}-database"
         },
         var.database_route_table_tags
-    )
+  )
 }
 
 resource "aws_route" "public" {
@@ -109,16 +109,16 @@ resource "aws_route" "public" {
   gateway_id = aws_internet_gateway.main.id
 }
 
-resource "aws_eip" "name" {
-    domain = "vpc"
-
-    tags = merge(
+resource "aws_eip" "nat" {
+  domain                    = "vpc"
+  
+  tags = merge(
         local.common_tags,
         {
             Name = "${var.project}-${var.environment}-nat"
         },
         var.eip_tags
-    )
+  )
 }
 
 resource "aws_nat_gateway" "main" {
