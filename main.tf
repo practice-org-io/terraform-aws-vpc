@@ -131,7 +131,7 @@ resource "aws_nat_gateway" "main" {
             Name = "${var.project}-${var.environment}"
         },
         var.nat_gateway_tags
-    )
+  )
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
   # on the Internet Gateway for the VPC.
